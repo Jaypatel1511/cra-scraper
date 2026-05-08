@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cra-scraper"
+version = "0.1.0"
+description = "CRA exam ratings scraper and analyzer — search FFIEC database, parse Performance Evaluations, identify CDFI partnership opportunities"
+readme = "README.md"
+requires-python = ">=3.9"
+license = {text = "MIT"}
+dependencies = [
+    "pandas>=1.4.0",
+    "requests>=2.27.0",
+    "beautifulsoup4>=4.10.0",
+]
+
+[project.optional-dependencies]
+pdf = ["pdfplumber>=0.7.0"]
+
+[project.urls]
+Homepage = "https://github.com/Jaypatel1511/cra-scraper"
