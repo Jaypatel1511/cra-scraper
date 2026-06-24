@@ -1,0 +1,46 @@
+name: Tests
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+# Least-privilege default for GITHUB_TOKEN. The test job only checks out and
+# runs the suite, so read access is sufficient.
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.9", "3.10", "3.11", "3.12"]
+
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4.3.1
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065  # v5.6.0
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      # No [dev]/[test] extra exists (only [pdf]), so test deps are installed
+      # explicitly. pdfplumber is NOT needed: it is imported lazily inside
+      # parse_pe_pdf, and only parse_pe_text is exercised by the suite.
+      - name: Install package and test dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e . "pytest>=7" pytest-socket
+
+      # --disable-socket hard-blocks all network I/O. The suite is fully offline
+      # (every request is monkeypatched) and there is no live test, so this is
+      # belt-and-suspenders: cloud CI runners must never hit ffiec.gov, whose
+      # live scrape 403s from cloud IPs by design and would false-red the build.
+      - name: Run tests (offline, sockets disabled)
+        run: pytest tests/ -v --import-mode=importlib --disable-socket --tb=short
+
+      - name: Verify package version import
+        run: python -c "import crascraper; print('crascraper OK:', crascraper.__version__)"
