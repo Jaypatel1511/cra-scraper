@@ -35,7 +35,8 @@ queryable in Python for the first time.
         summary_report,
     )
 
-    # Search FFIEC ratings (or use sample data when offline)
+    # Search FFIEC ratings. Raises FFIECAccessError on failure (e.g. HTTP 403 —
+    # see note below); never returns placeholder/sample data.
     ratings = search_ratings(bank_name="Federal")
 
     # Compute rating distribution
@@ -58,6 +59,18 @@ queryable in Python for the first time.
     # Generate a full Markdown summary report
     report = summary_report(ratings)
     print(report)
+
+---
+
+## A note on cloud/datacenter environments
+
+`search_ratings()` scrapes `www.ffiec.gov`, which sits behind Cloudflare.
+Requests from **cloud/datacenter IP ranges** (Google Colab, CI runners, hosted
+notebooks, most cloud VMs) are blocked with **HTTP 403** at the edge. This is an
+IP-reputation block, not something a User-Agent or header change can clear, and it
+is not transient. When this happens the call raises `FFIECAccessError` with an
+explanation — it does **not** return placeholder data. The scrape works from a
+**residential** internet connection; run it from one to obtain the data.
 
 ---
 
