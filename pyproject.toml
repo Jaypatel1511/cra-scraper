@@ -19,4 +19,8 @@ dependencies = [
 pdf = ["pdfplumber>=0.7.0"]
 
 [project.urls]
-Homepage = "https://github.com/Jaypatel1511/cra-scraper"
+Homepage = "https://jaypatel1511.github.io/cdfi-superpowers/"
+Repository = "https://github.com/Jaypatel1511/cra-scraper"
+Documentation = "https://github.com/Jaypatel1511/cra-scraper#readme"
+Issues = "https://github.com/Jaypatel1511/cra-scraper/issues"
+Changelog = "https://github.com/Jaypatel1511/cra-scraper/blob/main/CHANGELOG.md"
